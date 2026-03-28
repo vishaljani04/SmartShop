@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCart } from '../redux/slices/cartSlice';
+import { fetchCart, clearBuyNowItem } from '../redux/slices/cartSlice';
 import { createNewOrder, verifyPayment } from '../redux/slices/orderSlice';
-import { loadUser } from '../redux/slices/authSlice';
+import { loadUser, addAddress } from '../redux/slices/authSlice';
 import { validateCoupon } from '../services/adminService';
 import LoadingSpinner from '../components/LoadingSpinner';
 import toast from 'react-hot-toast';
@@ -12,7 +12,7 @@ import { HiOutlineLocationMarker, HiOutlineTag, HiOutlineCreditCard } from 'reac
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { cart, loading } = useSelector(state => state.cart);
+  const { cart, buyNowItem, loading } = useSelector(state => state.cart);
   const { user } = useSelector(state => state.auth);
   const { currentOrder, loading: orderLoading } = useSelector(state => state.orders);
 
@@ -26,6 +26,7 @@ const CheckoutPage = () => {
   useEffect(() => {
     dispatch(fetchCart());
     dispatch(loadUser());
+    return () => { dispatch(clearBuyNowItem()); };
   }, [dispatch]);
 
   useEffect(() => {
@@ -35,9 +36,10 @@ const CheckoutPage = () => {
     }
   }, [user]);
 
-  const items = cart?.items || [];
+  const items = buyNowItem ? [buyNowItem] : (cart?.items || []);
   const subtotal = items.reduce((sum, item) => {
-    const price = item.product?.discountPrice > 0 ? item.product.discountPrice : (item.product?.price || 0);
+    const p = item.product;
+    const price = p?.discountPrice > 0 ? p.discountPrice : (p?.price || 0);
     return sum + price * item.quantity;
   }, 0);
   const shipping = subtotal > 500 ? 0 : 50;
@@ -69,14 +71,25 @@ const CheckoutPage = () => {
   };
 
   const handlePayment = async () => {
-    if (!selectedAddress) return toast.error('Please select a delivery address');
+    if (!selectedAddress && !newAddress.fullName) return toast.error('Please select or add a delivery address');
 
     const scriptLoaded = await loadRazorpayScript();
     if (!scriptLoaded) return toast.error('Razorpay SDK failed to load');
 
+    let finalAddress = selectedAddress;
+    if (selectedAddress?._id === 'new' || (!selectedAddress && newAddress.fullName)) {
+      const res = await dispatch(addAddress(newAddress)).unwrap();
+      finalAddress = res.addresses[res.addresses.length - 1];
+    }
+
     const result = await dispatch(createNewOrder({
-      shippingAddress: selectedAddress,
-      couponCode: couponApplied || undefined
+      shippingAddress: finalAddress,
+      couponCode: couponApplied || undefined,
+      items: buyNowItem ? [{
+        product: buyNowItem.product._id,
+        quantity: buyNowItem.quantity,
+        variant: buyNowItem.variant
+      }] : undefined
     })).unwrap();
 
     const options = {
@@ -156,11 +169,12 @@ const CheckoutPage = () => {
                       value={newAddress[field]} onChange={(e) => setNewAddress({ ...newAddress, [field]: e.target.value })}
                       className={`input-field text-sm ${field === 'street' ? 'col-span-2' : ''}`} />
                   ))}
-                  <button onClick={() => {
-                    setSelectedAddress({ ...newAddress, _id: 'new' });
+                  <button onClick={async () => {
+                    const res = await dispatch(addAddress(newAddress)).unwrap();
+                    setSelectedAddress(res.addresses[res.addresses.length - 1]);
                     setShowNewAddress(false);
-                    toast.success('Address selected');
-                  }} className="btn-primary col-span-2 text-sm">Use This Address</button>
+                    toast.success('Address saved and selected');
+                  }} className="btn-primary col-span-2 text-sm">Save This Address</button>
                 </div>
               )}
             </div>

@@ -41,12 +41,19 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState: {
     cart: { items: [] },
+    buyNowItem: null,
     loading: false,
     error: null
   },
   reducers: {
     clearCartState: (state) => {
       state.cart = { items: [] };
+    },
+    setBuyNowItem: (state, action) => {
+      state.buyNowItem = action.payload;
+    },
+    clearBuyNowItem: (state) => {
+      state.buyNowItem = null;
     }
   },
   extraReducers: (builder) => {

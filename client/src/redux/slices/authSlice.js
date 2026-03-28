@@ -44,6 +44,33 @@ export const toggleWishlistItem = createAsyncThunk('auth/toggleWishlist', async 
   }
 });
 
+export const addAddress = createAsyncThunk('auth/addAddress', async (data, { rejectWithValue }) => {
+  try {
+    const res = await authService.addAddress(data);
+    return res.data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to add address');
+  }
+});
+
+export const updateAddress = createAsyncThunk('auth/updateAddress', async ({ id, data }, { rejectWithValue }) => {
+  try {
+    const res = await authService.updateAddress(id, data);
+    return res.data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to update address');
+  }
+});
+
+export const deleteAddress = createAsyncThunk('auth/deleteAddress', async (id, { rejectWithValue }) => {
+  try {
+    const res = await authService.deleteAddress(id);
+    return res.data;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to delete address');
+  }
+});
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -103,6 +130,21 @@ const authSlice = createSlice({
       .addCase(toggleWishlistItem.fulfilled, (state, action) => {
         if (state.user) {
           state.user.wishlist = action.payload.wishlist;
+        }
+      })
+      .addCase(addAddress.fulfilled, (state, action) => {
+        if (state.user) {
+          state.user.addresses = action.payload.addresses;
+        }
+      })
+      .addCase(updateAddress.fulfilled, (state, action) => {
+        if (state.user) {
+          state.user.addresses = action.payload.addresses;
+        }
+      })
+      .addCase(deleteAddress.fulfilled, (state, action) => {
+        if (state.user) {
+          state.user.addresses = action.payload.addresses;
         }
       });
   }

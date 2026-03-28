@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProduct, fetchRelated } from '../redux/slices/productSlice';
-import { addItem } from '../redux/slices/cartSlice';
+import { addItem, setBuyNowItem } from '../redux/slices/cartSlice';
 import { toggleWishlistItem } from '../redux/slices/authSlice';
 import ProductCard from '../components/ProductCard';
 import StarRating from '../components/StarRating';
@@ -156,8 +156,12 @@ const ProductDetailPage = () => {
               </button>
               <button 
                 onClick={() => {
-                  if (!isAuthenticated) return toast.error('Please login first');
-                  dispatch(addItem({ productId: product._id, quantity, variant: selectedVariant ? { size: selectedVariant.size, color: selectedVariant.color } : undefined }));
+                  const buyNowItem = {
+                    product,
+                    quantity,
+                    variant: selectedVariant ? { size: selectedVariant.size, color: selectedVariant.color } : undefined
+                  };
+                  dispatch(setBuyNowItem(buyNowItem));
                   navigate('/checkout');
                 }} 
                 disabled={product.stock === 0 || user?._id === product.storeOwner}

@@ -15,18 +15,24 @@ const razorpay = new Razorpay({
 // @route   POST /api/orders/create
 exports.createOrder = async (req, res, next) => {
   try {
-    const { shippingAddress, couponCode } = req.body;
-
-    const cart = await Cart.findOne({ user: req.user._id }).populate('items.product');
-    if (!cart || cart.items.length === 0) {
-      return res.status(400).json({ success: false, message: 'Cart is empty' });
+    const { shippingAddress, couponCode, items: directItems } = req.body;
+    let orderItemsData = [];
+    
+    if (directItems && directItems.length > 0) {
+      orderItemsData = directItems;
+    } else {
+      const cart = await Cart.findOne({ user: req.user._id }).populate('items.product');
+      if (!cart || cart.items.length === 0) {
+        return res.status(400).json({ success: false, message: 'Cart is empty' });
+      }
+      orderItemsData = cart.items;
     }
 
     // Calculate totals
     let subtotal = 0;
     const orderItems = [];
 
-    for (const item of cart.items) {
+    for (const item of orderItemsData) {
       const product = item.product;
       if (!product || !product.isActive) {
         return res.status(400).json({ success: false, message: `Product ${product?.title || 'unknown'} is unavailable` });
