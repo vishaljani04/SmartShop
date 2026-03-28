@@ -46,12 +46,12 @@ const LoginPage = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-dark-700 mb-1.5">Email</label>
-              <input type="email" required value={form.email} onChange={(e) => setForm({...form, email: e.target.value})}
+              <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
                 className="input-field" placeholder="you@example.com" id="login-email" />
             </div>
             <div>
               <label className="block text-sm font-medium text-dark-700 mb-1.5">Password</label>
-              <input type="password" required value={form.password} onChange={(e) => setForm({...form, password: e.target.value})}
+              <input type="password" required value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })}
                 className="input-field" placeholder="••••••••" id="login-password" />
             </div>
             <button type="submit" disabled={loading} className="btn-primary w-full" id="login-submit">
@@ -64,8 +64,8 @@ const LoginPage = () => {
             <span className="relative px-3 bg-white text-xs text-dark-400 uppercase tracking-widest font-bold">Or continue with</span>
           </div>
 
-          <a 
-            href={`${import.meta.env.VITE_API_URL || 'https://smartshop-api-production.up.railway.app/api'}/auth/google`}
+          <a
+            href={`${import.meta.env.VITE_API_URL || 'https://smartshop-akc7.onrender.com/api'}/auth/google`}
             className="w-full flex items-center justify-center space-x-3 py-3 rounded-xl border-2 border-dark-50 hover:border-dark-100 hover:bg-dark-50 transition-all font-semibold text-dark-700"
           >
             <FcGoogle className="w-5 h-5" />
@@ -73,7 +73,7 @@ const LoginPage = () => {
           </a>
 
           <div className="mt-4 p-3 bg-dark-50 rounded-xl">
-            <p className="text-xs text-dark-400 text-center">Demo: admin@smartshop.com / admin123</p>
+            <p className="text-xs text-dark-400 text-center"></p>
           </div>
         </div>
 

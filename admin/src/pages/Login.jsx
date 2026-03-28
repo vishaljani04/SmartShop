@@ -61,7 +61,7 @@ const Login = () => {
           </button>
         </form>
 
-        <p className="text-center text-xs text-gray-600/30 mt-6">admin@smartshop.com / admin123</p>
+        <p className="text-center text-xs text-gray-600/30 mt-6"></p>
       </div>
     </div>
   );
