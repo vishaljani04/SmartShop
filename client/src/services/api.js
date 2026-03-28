@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://smartshop-akc7.onrender.com/api',
   timeout: 10000,
   headers: { 'Content-Type': 'application/json' }
 });
