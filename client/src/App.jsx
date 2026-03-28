@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 // Layout
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 
 // User Pages
 import HomePage from './pages/HomePage';
@@ -41,6 +42,7 @@ const StoreRoute = ({ children }) => {
 function App() {
   return (
     <>
+      <ScrollToTop />
       <Toaster position="top-right" toastOptions={{
         duration: 3000,
         style: { borderRadius: '12px', background: '#1e293b', color: '#f8fafc', fontSize: '14px' }
