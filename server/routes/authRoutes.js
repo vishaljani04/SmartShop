@@ -24,8 +24,13 @@ router.get('/google/callback',
   passport.authenticate('google', { failureRedirect: '/login', session: false }),
   (req, res) => {
     const token = generateToken(req.user._id);
-    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
-    // Redirect to frontend with token
+    let clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+    
+    // Ensure clientUrl is absolute to prevent relative redirect issues
+    if (!clientUrl.startsWith('http')) {
+      clientUrl = `https://${clientUrl}`;
+    }
+    
     res.redirect(`${clientUrl}/login?token=${token}`);
   }
 );
