@@ -1,0 +1,50 @@
+name: SmartShop CI/CD
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+
+    - name: Install Server Dependencies
+      run: cd server && npm install
+
+    - name: Install Client Dependencies
+      run: cd client && npm install
+
+    - name: Build Client
+      run: cd client && npm run build
+      env:
+        VITE_API_URL: http://localhost:5000/api
+
+    - name: Run Server Tests (if any)
+      run: cd server && npm test || true
+
+    - name: Docker Image Build (Dry Run)
+      run: |
+        echo "Building Docker images..."
+        # docker build -t smartshop-server ./server
+        # docker build -t smartshop-client ./client

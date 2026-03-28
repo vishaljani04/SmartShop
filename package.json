@@ -1,0 +1,20 @@
+{
+  "name": "smartshop",
+  "version": "1.0.0",
+  "description": "SmartShop E-Commerce Platform",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "server": "npm run start --prefix server",
+    "client": "npm run dev --prefix client",
+    "admin": "npm run dev --prefix admin",
+    "dev": "concurrently \"npm run server\" \"npm run client\" \"npm run admin\"",
+    "build:client": "npm run build --prefix client",
+    "build:admin": "npm run build --prefix admin",
+    "install:all": "npm install && npm install --prefix server && npm install --prefix client && npm install --prefix admin",
+    "seed": "node server/utils/seedData.js"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

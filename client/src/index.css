@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f8fafc;
+    color: #1e293b;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 text-white px-6 py-2.5 rounded-xl font-semibold
+    hover:bg-primary-700 active:bg-primary-800 transition-all duration-200
+    shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30
+    hover:-translate-y-0.5 active:translate-y-0;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-dark-800 px-6 py-2.5 rounded-xl font-semibold
+    border border-dark-200 hover:border-primary-300 hover:text-primary-600
+    transition-all duration-200 hover:-translate-y-0.5;
+  }
+
+  .btn-danger {
+    @apply bg-red-500 text-white px-6 py-2.5 rounded-xl font-semibold
+    hover:bg-red-600 transition-all duration-200 shadow-lg shadow-red-500/25;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-dark-100
+    hover:shadow-lg hover:shadow-dark-900/5 transition-all duration-300;
+  }
+
+  .glass {
+    @apply bg-white/80 backdrop-blur-lg border border-white/20 shadow-lg;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl border border-dark-200
+    focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20
+    outline-none transition-all duration-200 bg-white text-dark-800
+    placeholder:text-dark-400;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-success {
+    @apply badge bg-emerald-100 text-emerald-700;
+  }
+
+  .badge-warning {
+    @apply badge bg-amber-100 text-amber-700;
+  }
+
+  .badge-danger {
+    @apply badge bg-red-100 text-red-700;
+  }
+
+  .badge-info {
+    @apply badge bg-blue-100 text-blue-700;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-accent-500;
+  }
+
+  .animate-in {
+    @apply animate-fade-in;
+  }
+
+  /* Ticker & Marquee Animations */
+  .testimonial-ticker {
+    display: flex;
+    gap: 2rem;
+    animation: scroll-left 40s linear infinite;
+    width: max-content;
+  }
+
+  .scroll-wrapper {
+    overflow: hidden;
+    padding: 1rem 0;
+    position: relative;
+    width: 100%;
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  }
+
+  .scroll-container {
+    display: flex;
+    gap: 4rem;
+    animation: scroll-left 30s linear infinite;
+    width: max-content;
+    align-items: center;
+  }
+
+  .seller-logo-item {
+    flex-shrink: 0;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0 2rem;
+  }
+
+  .seller-logo-item:hover {
+    transform: scale(1.1);
+  }
+
+  .seller-ticker-img {
+    max-height: 50px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .testimonial-card-item {
+    @apply bg-dark-900/50 backdrop-blur-md border border-dark-800 p-8 rounded-3xl w-[400px] flex-shrink-0;
+  }
+
+  @keyframes scroll-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.8s ease-out forwards;
+  }
+}
