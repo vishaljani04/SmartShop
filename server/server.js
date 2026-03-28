@@ -61,6 +61,15 @@ app.use('/api/upload', require('./routes/uploadRoutes'));
 const path = require('path');
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Root route for deployment check
+app.get('/', (req, res) => {
+  res.json({ 
+    success: true, 
+    message: 'SmartShop API Server is Running', 
+    docs: '/api/health' 
+  });
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'SmartShop API is running', timestamp: new Date().toISOString() });
