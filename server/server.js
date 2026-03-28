@@ -42,6 +42,8 @@ app.use(passport.session());
 // CORS
 app.use(cors({
   origin: [
+    'https://smartshopecom.vercel.app',
+    'https://smartshopecom-admin.vercel.app',
     process.env.CLIENT_URL || 'http://localhost:5173',
     process.env.ADMIN_URL || 'http://localhost:5174'
   ],
