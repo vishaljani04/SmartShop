@@ -17,7 +17,7 @@ const LoginPage = () => {
   useEffect(() => {
     const token = searchParams.get('token');
     if (token) {
-      localStorage.setItem('token', token);
+      localStorage.setItem('smartshop_token', token);
       dispatch(loadUser());
       navigate('/');
     }
@@ -65,7 +65,7 @@ const LoginPage = () => {
           </div>
 
           <a 
-            href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/google`}
+            href={`${import.meta.env.VITE_API_URL || 'https://smartshop-api-production.up.railway.app/api'}/auth/google`}
             className="w-full flex items-center justify-center space-x-3 py-3 rounded-xl border-2 border-dark-50 hover:border-dark-100 hover:bg-dark-50 transition-all font-semibold text-dark-700"
           >
             <FcGoogle className="w-5 h-5" />

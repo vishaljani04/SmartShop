@@ -29,6 +29,20 @@ const RegisterPage = () => {
           </div>
           <h1 className="text-2xl font-bold text-dark-900">Create Account</h1>
           <p className="text-dark-400 mt-1">Join SmartShop and start shopping</p>
+          
+          <div className="mt-6">
+            <a 
+              href={`${import.meta.env.VITE_API_URL || 'https://smartshop-akc7.onrender.com/api'}/auth/google`}
+              className="w-full flex items-center justify-center space-x-3 py-3 rounded-xl border-2 border-dark-50 hover:border-dark-100 hover:bg-dark-50 transition-all font-semibold text-dark-700"
+            >
+              <FcGoogle className="w-5 h-5" />
+              <span>Continue with Google</span>
+            </a>
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-dark-100"></div></div>
+              <div className="relative flex justify-center text-sm"><span className="px-2 bg-dark-50 text-dark-400">Or continue with</span></div>
+            </div>
+          </div>
         </div>
 
         <div className="card p-8">
