@@ -66,11 +66,11 @@ const Footer = () => {
                         </li>
                         <li style={{...styles.footerItem, display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
                             <HiOutlinePhone className="text-primary-400" size={18} />
-                            <span>+91 98765 43210</span>
+                            <span>+91 63512 20724</span>
                         </li>
                         <li style={{...styles.footerItem, display: 'flex', alignItems: 'flex-start', gap: '0.5rem'}}>
                             <HiOutlineLocationMarker className="text-primary-400 mt-1" size={18} />
-                            <span>123 Tech Park, Bangalore,<br />Karnataka 560001</span>
+                            <span>123 Smartshop Webhub Surat<br />Gujarat 395006</span>
                         </li>
                     </ul>
                 </div>
