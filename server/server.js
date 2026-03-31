@@ -39,14 +39,24 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// CORS
+// CORS Configuration
+const allowedOrigins = [
+  'https://smartshopecom.vercel.app',
+  'https://adminsmartshop.vercel.app',
+  process.env.CLIENT_URL,
+  process.env.ADMIN_URL,
+  'http://localhost:5173',
+  'http://localhost:5174'
+].filter(Boolean).map(url => url.startsWith('http') ? url : `https://${url}`);
+
 app.use(cors({
-  origin: [
-    'https://smartshopecom.vercel.app',
-    'https://smartshopecom-admin.vercel.app',
-    process.env.CLIENT_URL || 'http://localhost:5173',
-    process.env.ADMIN_URL || 'http://localhost:5174'
-  ],
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 

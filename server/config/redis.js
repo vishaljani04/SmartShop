@@ -3,8 +3,17 @@ const Redis = require('ioredis');
 let redis;
 
 const connectRedis = () => {
+  const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+  const isProd = process.env.NODE_ENV === 'production';
+
+  // Skip Redis if in production and set to localhost
+  if (isProd && redisUrl.includes('localhost')) {
+    console.warn('Production Redis is set to localhost - bypassing to use MongoDB fallback.');
+    return null;
+  }
+
   try {
-    redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
+    redis = new Redis(redisUrl, {
       maxRetriesPerRequest: 3,
       retryStrategy(times) {
         if (times > 3) {
