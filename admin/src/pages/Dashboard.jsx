@@ -17,12 +17,12 @@ const Dashboard = () => {
   if (!stats) return <p className="text-gray-600/40 text-center py-20">Failed to load</p>;
 
   const cards = [
-    { icon: HiOutlineCurrencyRupee, label: 'Total Revenue', value: fmt(stats.totalSales), gradient: 'from-emerald-500 to-green-600', bg: 'bg-emerald-500/10' },
-    { icon: HiOutlineClipboardList, label: 'Total Orders', value: stats.totalOrders, gradient: 'from-blue-500 to-indigo-600', bg: 'bg-blue-500/10' },
-    { icon: HiOutlineCube, label: 'Products', value: stats.totalProducts, gradient: 'from-purple-500 to-violet-600', bg: 'bg-purple-500/10' },
-    { icon: HiOutlineUsers, label: 'Users', value: stats.totalUsers, gradient: 'from-amber-500 to-orange-600', bg: 'bg-amber-500/10' },
-    { icon: HiBuildingStorefront, label: 'Store Owners', value: stats.totalStoreOwners, gradient: 'from-pink-500 to-rose-600', bg: 'bg-pink-500/10' },
-    { icon: HiBuildingStorefront, label: 'Stores', value: stats.totalStores, gradient: 'from-cyan-500 to-teal-600', bg: 'bg-cyan-500/10' },
+    { icon: HiOutlineCurrencyRupee, label: 'Total Revenue', value: fmt(stats.totalSales), color: '#10b981', bg: 'bg-emerald-50' },
+    { icon: HiOutlineClipboardList, label: 'Total Orders', value: stats.totalOrders, color: '#3b82f6', bg: 'bg-blue-50' },
+    { icon: HiOutlineCube, label: 'Products', value: stats.totalProducts, color: '#8b5cf6', bg: 'bg-purple-50' },
+    { icon: HiOutlineUsers, label: 'Users', value: stats.totalUsers, color: '#f59e0b', bg: 'bg-amber-50' },
+    { icon: HiBuildingStorefront, label: 'Store Owners', value: stats.totalStoreOwners, color: '#ec4899', bg: 'bg-pink-50' },
+    { icon: HiBuildingStorefront, label: 'Stores', value: stats.totalStores, color: '#06b6d4', bg: 'bg-cyan-50' },
   ];
 
   const statusColors = { processing: 'bg-amber-400', confirmed: 'bg-blue-400', shipped: 'bg-indigo-400', delivered: 'bg-emerald-400', cancelled: 'bg-red-400' };
@@ -30,14 +30,14 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       {/* Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {cards.map((c, i) => (
-          <div key={i} className="card p-5 hover:border-surface-700/80 transition-all group">
-            <div className={`w-10 h-10 ${c.bg} rounded-xl flex items-center justify-center mb-3`}>
-              <c.icon className={`w-5 h-5 bg-gradient-to-r ${c.gradient} bg-clip-text text-transparent`} style={{ filter: 'brightness(1.5)' }} />
+          <div key={i} className="card p-5 hover:border-gray-300 hover:-translate-y-0.5 transition-all group duration-300">
+            <div className={`w-12 h-12 ${c.bg} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+              <c.icon className="w-6 h-6" style={{ color: c.color }} />
             </div>
-            <p className="text-2xl font-bold text-gray-900">{c.value}</p>
-            <p className="text-xs text-gray-600/40 mt-0.5">{c.label}</p>
+            <p className="text-2xl font-bold text-gray-900 tracking-tight">{c.value}</p>
+            <p className="text-xs font-medium text-gray-500 mt-1 uppercase tracking-wider">{c.label}</p>
           </div>
         ))}
       </div>
