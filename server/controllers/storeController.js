@@ -61,15 +61,27 @@ const getStoreDashboard = async (req, res) => {
         return sum + storeItems.reduce((s, i) => s + i.price * i.quantity, 0);
       }, 0);
 
-    const recentOrders = await Order.find({ 'items.store': store._id })
+    const recentOrdersRaw = await Order.find({ 'items.store': store._id })
       .populate('user', 'name email')
       .sort('-createdAt')
       .limit(10);
 
-    // Monthly sales
+    const recentOrders = recentOrdersRaw.map(o => {
+      const storeItems = o.items.filter(i => i.store?.toString() === store._id.toString());
+      const storeAmount = storeItems.reduce((s, i) => s + i.price * i.quantity, 0);
+      return { ...o.toObject(), storeAmount };
+    });
+
+    // Monthly sales (sum of items from this store in paid orders)
     const monthlySales = await Order.aggregate([
+      { $unwind: '$items' },
       { $match: { 'items.store': store._id, paymentStatus: 'paid' } },
-      { $group: { _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } }, total: { $sum: '$totalAmount' }, count: { $sum: 1 } } },
+      { $group: { 
+          _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } }, 
+          total: { $sum: { $multiply: ['$items.price', '$items.quantity'] } }, 
+          count: { $addToSet: '$_id' } 
+      } },
+      { $project: { _id: 1, total: 1, count: { $size: '$count' } } },
       { $sort: { _id: -1 } },
       { $limit: 6 }
     ]);

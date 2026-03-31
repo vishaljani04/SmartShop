@@ -17,7 +17,7 @@ const StoreDashboard = () => {
   if (!stats) return <div className="text-center py-20 text-slate-500">Welcome to your store dashboard! Add products to see stats.</div>;
 
   const cards = [
-    { label: 'Total Sales', value: fmt(stats.totalSales), icon: HiOutlineCurrencyRupee, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    { label: 'Total Sales', value: fmt(stats.totalRevenue), icon: HiOutlineCurrencyRupee, color: 'text-emerald-600', bg: 'bg-emerald-50' },
     { label: 'Orders', value: stats.totalOrders, icon: HiOutlineClipboardList, color: 'text-blue-600', bg: 'bg-blue-50' },
     { label: 'Products', value: stats.totalProducts, icon: HiOutlineCube, color: 'text-indigo-600', bg: 'bg-indigo-50' },
     { label: 'Rating', value: `⭐ ${stats.rating.toFixed(1)}`, icon: HiOutlineStar, color: 'text-amber-500', bg: 'bg-amber-50' }
@@ -49,7 +49,7 @@ const StoreDashboard = () => {
                      <p className="text-xs text-slate-500">{new Date(o.createdAt).toLocaleDateString()}</p>
                    </div>
                    <div className="text-right">
-                     <p className="text-sm font-bold text-primary-600">{fmt(o.totalAmount)}</p>
+                     <p className="text-sm font-bold text-primary-600">{fmt(o.storeAmount)}</p>
                      <p className="text-[10px] uppercase font-bold text-slate-400">{o.paymentStatus}</p>
                    </div>
                  </div>
