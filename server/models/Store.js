@@ -44,7 +44,5 @@ storeSchema.pre('save', function (next) {
 });
 
 storeSchema.index({ name: 'text', description: 'text' });
-storeSchema.index({ owner: 1 });
-storeSchema.index({ slug: 1 });
 
 module.exports = mongoose.model('Store', storeSchema);

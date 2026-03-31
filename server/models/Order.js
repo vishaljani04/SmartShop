@@ -53,5 +53,8 @@ orderSchema.index({ user: 1, createdAt: -1 });
 orderSchema.index({ razorpayOrderId: 1 });
 orderSchema.index({ 'items.store': 1 });
 orderSchema.index({ 'items.storeOwner': 1 });
+orderSchema.index({ paymentStatus: 1 });
+orderSchema.index({ orderStatus: 1 });
+orderSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model('Order', orderSchema);

@@ -9,46 +9,46 @@ const Store = require('../models/Store');
 // @route   GET /api/admin/dashboard
 exports.getDashboard = async (req, res, next) => {
   try {
-    const [totalUsers, totalStoreOwners, totalStores, totalProducts, totalOrders, orders] = await Promise.all([
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+    const [
+      totalUsers, totalStoreOwners, totalStores, totalProducts, totalOrders,
+      salesResult, recentOrders, monthlySales, statusDistribution, lowStock, topStores
+    ] = await Promise.all([
       User.countDocuments({ role: 'user' }),
       User.countDocuments({ role: 'storeOwner' }),
       Store.countDocuments(),
       Product.countDocuments(),
       Order.countDocuments(),
-      Order.find({ paymentStatus: 'paid' })
+      Order.aggregate([
+        { $match: { paymentStatus: 'paid' } },
+        { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+      ]),
+      Order.find()
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .populate('user', 'name email'),
+      Order.aggregate([
+        { $match: { paymentStatus: 'paid', createdAt: { $gte: sixMonthsAgo } } },
+        { $group: { _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } }, total: { $sum: '$totalAmount' }, count: { $sum: 1 } } },
+        { $sort: { _id: 1 } }
+      ]),
+      Order.aggregate([
+        { $group: { _id: '$orderStatus', count: { $sum: 1 } } }
+      ]),
+      Product.find({ stock: { $lte: 10 }, isActive: true })
+        .select('title stock price')
+        .sort({ stock: 1 })
+        .limit(10),
+      Store.find({ isActive: true })
+        .sort({ totalRevenue: -1 })
+        .limit(5)
+        .select('name logo rating totalRevenue totalProducts owner')
+        .populate('owner', 'name email')
     ]);
 
-    const totalSales = orders.reduce((sum, order) => sum + order.totalAmount, 0);
-
-    const recentOrders = await Order.find()
-      .sort({ createdAt: -1 })
-      .limit(10)
-      .populate('user', 'name email');
-
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-
-    const monthlySales = await Order.aggregate([
-      { $match: { paymentStatus: 'paid', createdAt: { $gte: sixMonthsAgo } } },
-      { $group: { _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } }, total: { $sum: '$totalAmount' }, count: { $sum: 1 } } },
-      { $sort: { _id: 1 } }
-    ]);
-
-    const statusDistribution = await Order.aggregate([
-      { $group: { _id: '$orderStatus', count: { $sum: 1 } } }
-    ]);
-
-    const lowStock = await Product.find({ stock: { $lte: 10 }, isActive: true })
-      .select('title stock price')
-      .sort({ stock: 1 })
-      .limit(10);
-
-    // Top stores by revenue
-    const topStores = await Store.find({ isActive: true })
-      .sort({ totalRevenue: -1 })
-      .limit(5)
-      .select('name logo rating totalRevenue totalProducts owner')
-      .populate('owner', 'name email');
+    const totalSales = salesResult.length > 0 ? salesResult[0].total : 0;
 
     res.json({
       success: true,
