@@ -1,20 +1,65 @@
 import { useEffect, useState } from 'react';
 import API from '../api';
-import { HiOutlineUsers, HiOutlineCube, HiOutlineClipboardList, HiOutlineCurrencyRupee, HiOutlineExclamation } from 'react-icons/hi';
+import { HiOutlineUsers, HiOutlineCube, HiOutlineClipboardList, HiOutlineCurrencyRupee, HiOutlineExclamation, HiOutlineRefresh } from 'react-icons/hi';
 import { HiBuildingStorefront } from 'react-icons/hi2';
 
 const Dashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchStats = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await API.get('/admin/dashboard');
+      if (data.success) {
+        setStats(data.stats);
+      } else {
+        setError('Server returned an unsuccessful response.');
+      }
+    } catch (err) {
+      console.error('Dashboard error:', err);
+      setError(err.response?.data?.message || 'Could not load dashboard data. The server might be waking up or experiencing issues.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    API.get('/admin/dashboard').then(r => { setStats(r.data.stats); setLoading(false); }).catch(() => setLoading(false));
+    fetchStats();
   }, []);
 
   const fmt = (p) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(p || 0);
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin"></div></div>;
-  if (!stats) return <p className="text-gray-600/40 text-center py-20">Failed to load</p>;
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center h-[60vh] space-y-4">
+      <div className="w-10 h-10 border-4 border-black/5 border-t-black rounded-full animate-spin"></div>
+      <p className="text-xs font-medium text-gray-400 uppercase tracking-widest animate-pulse">Syncing Data...</p>
+    </div>
+  );
+
+  if (error) return (
+    <div className="flex flex-col items-center justify-center h-[70vh] space-y-6 px-6 text-center animate-fade-in">
+      <div className="w-20 h-20 bg-gray-50 rounded-3xl flex items-center justify-center mb-2 ring-1 ring-gray-100">
+        <HiOutlineExclamation className="w-10 h-10 text-gray-400" />
+      </div>
+      <div className="space-y-2">
+        <h2 className="text-2xl font-black text-black tracking-tight uppercase">Connection Interrupted</h2>
+        <p className="text-gray-500 max-w-md text-sm leading-relaxed">{error}</p>
+      </div>
+      <button onClick={fetchStats} className="bg-black text-white px-8 py-4 rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-gray-900 transition-all flex items-center space-x-3 shadow-xl shadow-black/10">
+        <HiOutlineRefresh className="w-4 h-4" />
+        <span>Re-attempt Connection</span>
+      </button>
+    </div>
+  );
+
+  if (!stats) return (
+    <div className="flex items-center justify-center h-64 text-gray-400 font-medium">
+      No statistics available at this time.
+    </div>
+  );
 
   const cards = [
     { icon: HiOutlineCurrencyRupee, label: 'Total Revenue', value: fmt(stats.totalSales), color: '#10b981', bg: 'bg-emerald-50' },

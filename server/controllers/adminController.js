@@ -16,36 +16,39 @@ exports.getDashboard = async (req, res, next) => {
       totalUsers, totalStoreOwners, totalStores, totalProducts, totalOrders,
       salesResult, recentOrders, monthlySales, statusDistribution, lowStock, topStores
     ] = await Promise.all([
-      User.countDocuments({ role: 'user' }),
-      User.countDocuments({ role: 'storeOwner' }),
-      Store.countDocuments(),
-      Product.countDocuments(),
-      Order.countDocuments(),
+      User.countDocuments({ role: 'user' }).catch(() => 0),
+      User.countDocuments({ role: 'storeOwner' }).catch(() => 0),
+      Store.countDocuments().catch(() => 0),
+      Product.countDocuments().catch(() => 0),
+      Order.countDocuments().catch(() => 0),
       Order.aggregate([
         { $match: { paymentStatus: 'paid' } },
         { $group: { _id: null, total: { $sum: '$totalAmount' } } }
-      ]),
+      ]).catch(() => []),
       Order.find()
         .sort({ createdAt: -1 })
         .limit(10)
-        .populate('user', 'name email'),
+        .populate('user', 'name email')
+        .catch(() => []),
       Order.aggregate([
         { $match: { paymentStatus: 'paid', createdAt: { $gte: sixMonthsAgo } } },
         { $group: { _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } }, total: { $sum: '$totalAmount' }, count: { $sum: 1 } } },
         { $sort: { _id: 1 } }
-      ]),
+      ]).catch(() => []),
       Order.aggregate([
         { $group: { _id: '$orderStatus', count: { $sum: 1 } } }
-      ]),
+      ]).catch(() => []),
       Product.find({ stock: { $lte: 10 }, isActive: true })
         .select('title stock price')
         .sort({ stock: 1 })
-        .limit(10),
+        .limit(10)
+        .catch(() => []),
       Store.find({ isActive: true })
         .sort({ totalRevenue: -1 })
         .limit(5)
         .select('name logo rating totalRevenue totalProducts owner')
         .populate('owner', 'name email')
+        .catch(() => [])
     ]);
 
     const totalSales = salesResult.length > 0 ? salesResult[0].total : 0;
